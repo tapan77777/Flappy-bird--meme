@@ -4,13 +4,8 @@ import Link from 'next/link';
 import {
   ArrowLeft,
   ArrowRight,
-  Calendar,
-  Check,
   Clock,
   MapPin,
-  Shield,
-  Users,
-  X,
 } from 'lucide-react';
 import experiences from '@/data/experiences.json';
 
@@ -147,8 +142,8 @@ const BookingCard = ({
         {/* ── Details ── */}
         <div className="space-y-3 text-sm divide-y divide-slate-50">
           <div className="flex justify-between py-1">
-            <span className="text-slate-500">Next departure</span>
-            <span className="font-medium text-slate-800">{trip.nextDeparture}</span>
+            <span className="text-slate-500">Departures</span>
+            <span className="font-medium text-slate-800">Available year-round</span>
           </div>
           <div className="flex justify-between py-1">
             <span className="text-slate-500">Advance to confirm</span>
@@ -193,7 +188,6 @@ const BookingCard = ({
 /* ─── Main Detail Component ─────────────────────────────────────────────── */
 const TripDetail = ({ trip }) => {
   const [openFaq,        setOpenFaq]        = useState(null);
-  const [expandedDay,    setExpandedDay]    = useState(0);
   const [activeGallery,  setActiveGallery]  = useState(0);
 
   /* ── Pricing state ── */
@@ -208,6 +202,88 @@ const TripDetail = ({ trip }) => {
   const waLink    = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(waMessage)}`;
 
   const experience = experiences.find((e) => e.slug === trip.slug);
+
+  /* ── Package calculator state ── */
+  const [pax,     setPax]     = useState(2);
+  const [dur,     setDur]     = useState(0);
+  const [tierIdx, setTierIdx] = useState(0);
+
+  const basePrices = trip.slug === 'darjeeling'
+    ? [[4999,7999,13499],[6999,10999,17999],[8999,13999,22999]]
+    : [[7500,11899,18790],[9499,14999,23490],[11999,18499,28990]];
+  const durLabels    = ['3 Days / 2 Nights', '4 Days / 3 Nights', '5 Days / 4 Nights'];
+  const durSubLabels = trip.slug === 'darjeeling'
+    ? ['Darjeeling core', '+ Lamahatta day', '+ Mirik + Pashupati']
+    : ['Jibhi + Jalori', '+ Shoja + Trek', '+ Manali day'];
+  const tierNames   = ['Standard', 'Deluxe', 'Premium'];
+  const tierDetails = trip.slug === 'darjeeling'
+    ? [
+        { vehicle: 'Shared Sumo · Guesthouse',   feats: ['Guesthouse sharing', 'Shared Sumo', 'Breakfast', 'Tiger Hill trip'] },
+        { vehicle: 'WagonR · 3-star hotel',       feats: ['3-star Mall Road hotel', 'Private WagonR', 'Breakfast', 'Tiger Hill', 'Tea garden visit'] },
+        { vehicle: 'Innova · Heritage hotel',     feats: ['Heritage boutique hotel', 'Innova private', 'All meals', 'Tiger Hill', 'Toy train booking help', 'Tea tasting'] },
+      ]
+    : [
+        { vehicle: 'Alto · Homestay sharing',   feats: ['Homestay (sharing)', 'Alto cab', 'Breakfast', 'Bonfire'] },
+        { vehicle: 'Ertiga · Wooden cottage',   feats: ['Wooden cottage', 'Ertiga cab', 'Breakfast', 'Bonfire', 'Guided forest walk'] },
+        { vehicle: 'Jimny · Private riverside', feats: ['Private riverside cottage', 'Jimny/Innova', 'All meals', 'Bonfire', 'Guided Serolsar trek'] },
+      ];
+  const itineraries = trip.slug === 'darjeeling'
+    ? [
+        [
+          { day: 'Day 1', title: 'NJP → Darjeeling · Arrive & explore',   desc: 'Pickup from NJP, scenic 3hr drive up the hills, check in, Mall Road evening walk, local food' },
+          { day: 'Day 2', title: 'Tiger Hill 4am · Sightseeing · Tea garden', desc: '4am Tiger Hill sunrise over Kanchenjunga, Ghoom Monastery, Batasia Loop, Zoo, tea garden walk' },
+          { day: 'Day 3', title: 'Mirik Lake · NJP drop',                  desc: 'Morning Mirik lake and Simana viewpoint, Gopaldhara tea estate, drop to NJP by afternoon' },
+        ],
+        [
+          { day: 'Day 1', title: 'NJP → Darjeeling · Arrive & explore',   desc: 'Pickup from NJP, check in, Mall Road, Chowrasta evening stroll, local Tibetan food' },
+          { day: 'Day 2', title: 'Tiger Hill 4am · Full sightseeing',      desc: '4am Tiger Hill, Ghoom Monastery, Batasia Loop, HMI, Padmaja Naidu Zoo, ropeway, Peace Pagoda' },
+          { day: 'Day 3', title: 'Lamahatta · Eco park · Pine forest',       desc: 'Drive to Lamahatta eco park — pine forest trails, flower gardens, peaceful Himalayan village, sunset views over the valley' },
+          { day: 'Day 4', title: 'Pashupati market · NJP drop',            desc: 'Morning Pashupati market (Nepal border), Kurseong enroute, drop to NJP' },
+        ],
+        [
+          { day: 'Day 1', title: 'NJP → Darjeeling · Arrive & explore',   desc: 'Pickup, check in heritage hotel, Mall Road, Chowrasta, local Darjeeling food' },
+          { day: 'Day 2', title: 'Tiger Hill 4am · Full sightseeing',      desc: '4am Tiger Hill sunrise, Ghoom Monastery, Batasia Loop, HMI, Zoo, ropeway' },
+          { day: 'Day 3', title: 'Toy train · Tea tasting · Tinchuley',    desc: 'Toy train ride, private tea estate tasting session, Tinchuley village offbeat stay' },
+          { day: 'Day 4', title: 'Mirik · Lamahatta · Sunset views',       desc: 'Mirik lake, Lamahatta eco park, Simana viewpoint, tea garden drive' },
+          { day: 'Day 5', title: 'Pashupati market · NJP drop',            desc: 'Morning market, Kurseong stop, drop to NJP with memories' },
+        ],
+      ]
+    : [
+        [
+          { day: 'Day 1', title: 'Aut → Jibhi · Arrive & settle',  desc: 'Pickup from Aut, check in, Jibhi waterfall walk, village market, bonfire evening' },
+          { day: 'Day 2', title: 'Jalori Pass · Serolsar Lake',     desc: 'Drive to Jalori Pass (3,120m), 5km trek to sacred Serolsar Lake through alpine forest' },
+          { day: 'Day 3', title: 'Shoja village · Aut drop',        desc: 'Morning at Shoja village, Chhoie waterfall walk, drop to Aut by evening' },
+        ],
+        [
+          { day: 'Day 1', title: 'Aut → Jibhi · Arrive & settle',       desc: 'Pickup from Aut, check in, Jibhi waterfall, market walk, bonfire' },
+          { day: 'Day 2', title: 'Jalori Pass · Serolsar Lake',          desc: 'Full day — Jalori Pass drive, Serolsar Lake trek, Budhi Nagin temple' },
+          { day: 'Day 3', title: 'Shoja · Raghupur Fort · Tirthan',      desc: 'Raghupur Fort trek from Jalori, evening Tirthan Valley riverside walk' },
+          { day: 'Day 4', title: 'Chhoie Waterfall · Aut drop',          desc: 'Morning Chhoie waterfall trek through GHNP forest, drop to Aut' },
+        ],
+        [
+          { day: 'Day 1', title: 'Aut → Jibhi · Arrive & settle', desc: 'Pickup from Aut, check in, Jibhi waterfall, market walk, bonfire' },
+          { day: 'Day 2', title: 'Jalori Pass · Serolsar Lake',    desc: 'Full day — Jalori Pass, Serolsar Lake trek, alpine forest' },
+          { day: 'Day 3', title: 'Shoja · Raghupur Fort',          desc: 'Raghupur Fort trek, panoramic Himalayan views, Tirthan evening' },
+          { day: 'Day 4', title: 'Manali day trip',                 desc: 'Scenic drive to Manali — Old Manali cafes, Hadimba temple, Mall Road' },
+          { day: 'Day 5', title: 'Chhoie Waterfall · Aut drop',    desc: 'Morning waterfall trek, drop to Aut, memories for life' },
+        ],
+      ];
+
+  const getDiscount = (p) => {
+    if (p === 1) return -0.30;
+    if (p === 2) return 0;
+    if (p <= 4)  return 0.05;
+    if (p <= 6)  return 0.10;
+    return 0.15;
+  };
+  const calcPrice    = (base, p) => {
+    const disc = getDiscount(p);
+    return Math.round(base * (1 + (disc < 0 ? Math.abs(disc) : -disc)) / 100) * 100;
+  };
+  const fmt          = (n) => '₹' + n.toLocaleString('en-IN');
+  const discountLabel = pax === 1 ? 'Solo surcharge +30%' : pax === 2 ? 'Standard pricing' : `${Math.round(getDiscount(pax) * 100)}% group discount`;
+  const currentPrice  = calcPrice(basePrices[dur][tierIdx], pax);
+  const currentTotal  = currentPrice * pax;
 
   return (
     <div className="min-h-screen bg-white">
@@ -244,9 +320,6 @@ const TripDetail = ({ trip }) => {
               <span className="flex items-center gap-1.5">
                 <Clock className="w-4 h-4" /> {trip.duration}
               </span>
-              <span className="flex items-center gap-1.5">
-                <Users className="w-4 h-4" /> {trip.groupSize}
-              </span>
             </div>
           </div>
         </div>
@@ -259,28 +332,6 @@ const TripDetail = ({ trip }) => {
           {/* ── Left: content ───────────────────────────────────────────── */}
           <div className="lg:col-span-2 space-y-12 md:space-y-16">
 
-            {/* Overview */}
-            <section>
-              <h2 className="text-2xl font-serif text-slate-900 mb-3">Overview</h2>
-              <p className="text-slate-600 text-lg leading-relaxed mb-8">{trip.tagline}</p>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {[
-                  { label: 'Duration',   value: trip.shortDuration,  Icon: Clock    },
-                  { label: 'Group Size', value: trip.groupSize,      Icon: Users    },
-                  { label: 'Difficulty', value: trip.difficulty,     Icon: Shield   },
-                  { label: 'Next Trip',  value: trip.nextDeparture,  Icon: Calendar },
-                ].map(({ label, value, Icon }) => (
-                  <div
-                    key={label}
-                    className="bg-slate-50 rounded-2xl p-4 text-center border border-slate-100"
-                  >
-                    <Icon className="w-5 h-5 text-emerald-600 mx-auto mb-2" />
-                    <p className="text-xs text-slate-400 mb-1">{label}</p>
-                    <p className="text-sm font-semibold text-slate-800 leading-snug">{value}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
 
             {/* From My Experience */}
             {experience && (
@@ -301,104 +352,136 @@ const TripDetail = ({ trip }) => {
               </div>
             )}
 
-            {/* Highlights */}
-            <section>
-              <h2 className="text-2xl font-serif text-slate-900 mb-5">Trip Highlights</h2>
-              <div className="grid sm:grid-cols-2 gap-3">
-                {trip.highlights.map((h, i) => (
-                  <div
+
+
+
+            {/* Package Calculator */}
+            <div className="px-0 py-2 bg-white">
+
+              {/* Duration tabs */}
+              <h2 className="text-2xl font-serif text-slate-900 mb-4">Choose your package</h2>
+              <div className="flex gap-2 mb-5">
+                {durLabels.map((label, i) => (
+                  <button
                     key={i}
-                    className="flex items-center gap-3 bg-emerald-50 border border-emerald-100 rounded-xl p-4"
+                    onClick={() => setDur(i)}
+                    className={`flex-1 py-2.5 px-2 rounded-xl border text-center transition-all ${
+                      dur === i
+                        ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
+                        : 'border-slate-200 bg-white text-slate-500'
+                    }`}
                   >
-                    <div className="w-7 h-7 bg-emerald-600 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Check className="w-4 h-4 text-white" />
-                    </div>
-                    <span className="text-slate-700 font-medium text-sm">{h}</span>
-                  </div>
+                    <div className="font-medium text-sm">{['3D/2N','4D/3N','5D/4N'][i]}</div>
+                    <div className="text-[10px] mt-0.5 opacity-70">{durSubLabels[i]}</div>
+                    {i === 1 && <div className="text-[9px] bg-emerald-600 text-white rounded-full px-2 py-0.5 mt-1 inline-block">Popular</div>}
+                  </button>
                 ))}
               </div>
-            </section>
 
-            {/* Day-wise Itinerary */}
-            <section>
-              <h2 className="text-2xl font-serif text-slate-900 mb-5">Day by Day</h2>
-              <div className="space-y-2">
-                {trip.itinerary.map((day, idx) => (
-                  <div
-                    key={day.day}
-                    className="border border-slate-200 rounded-2xl overflow-hidden"
-                  >
-                    <button
-                      onClick={() => setExpandedDay(expandedDay === idx ? null : idx)}
-                      className="w-full flex items-center justify-between px-4 sm:px-5 py-4 min-h-[60px] text-left hover:bg-slate-50 transition-colors"
+              {/* People selector */}
+              <div className="flex items-center justify-between bg-slate-50 rounded-xl px-4 py-3 mb-2">
+                <div>
+                  <p className="text-sm font-medium text-slate-900">Number of people</p>
+                  <p className="text-xs text-slate-400 mt-0.5">Price adjusts with group size</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setPax(p => Math.max(1, p - 1))}
+                    className="w-8 h-8 rounded-full border border-slate-300 bg-white flex items-center justify-center text-slate-700 text-lg font-light"
+                  >−</button>
+                  <span className="text-lg font-medium text-slate-900 w-5 text-center">{pax}</span>
+                  <button
+                    onClick={() => setPax(p => Math.min(8, p + 1))}
+                    className="w-8 h-8 rounded-full border border-slate-300 bg-white flex items-center justify-center text-slate-700 text-lg font-light"
+                  >+</button>
+                </div>
+              </div>
+              <div className={`text-center text-xs font-medium py-1.5 px-3 rounded-full mb-5 inline-block ${
+                pax === 1 ? 'bg-amber-100 text-amber-700' : pax >= 3 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
+              }`}>
+                {discountLabel}
+              </div>
+
+              {/* Tier cards */}
+              <div className="flex flex-col gap-3 mb-6">
+                {tierNames.map((name, i) => {
+                  const price = calcPrice(basePrices[dur][i], pax);
+                  const basePrice = basePrices[dur][i];
+                  const total = price * pax;
+                  return (
+                    <div
+                      key={i}
+                      onClick={() => setTierIdx(i)}
+                      className={`rounded-2xl border p-4 cursor-pointer relative transition-all ${
+                        tierIdx === i ? 'border-emerald-500 border-2' : 'border-slate-200'
+                      } ${i === 1 ? 'mt-2' : ''}`}
                     >
-                      <div className="flex items-center gap-4">
-                        <span className="w-9 h-9 bg-emerald-600 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
-                          {day.day}
-                        </span>
+                      {i === 1 && (
+                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-600 text-white text-[10px] px-3 py-1 rounded-full">
+                          Most popular
+                        </div>
+                      )}
+                      <div className="flex justify-between items-start mb-3">
                         <div>
-                          <p className="font-semibold text-slate-800 text-sm">{day.title}</p>
-                          <p className="text-xs text-emerald-600 mt-0.5">{day.location}</p>
+                          <p className="font-medium text-slate-900">{name}</p>
+                          <p className="text-xs text-slate-400 mt-0.5">{tierDetails[i].vehicle}</p>
+                        </div>
+                        <div className="text-right">
+                          {pax !== 2 && <p className="text-xs text-slate-400 line-through">{fmt(basePrice)}</p>}
+                          <p className="text-xl font-semibold text-slate-900">{fmt(price)}</p>
+                          <p className="text-[10px] text-slate-400">per person</p>
+                          <p className="text-xs text-emerald-600 font-medium">Total: {fmt(total)}</p>
                         </div>
                       </div>
-                      <svg
-                        width="16" height="16" viewBox="0 0 16 16" fill="none"
-                        className={`flex-shrink-0 text-slate-400 transition-transform duration-300 ${
-                          expandedDay === idx ? 'rotate-180' : ''
-                        }`}
-                      >
-                        <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </button>
-                    {expandedDay === idx && (
-                      <div className="px-5 pb-5 pt-1 border-t border-slate-100 bg-slate-50/50">
-                        <ul className="space-y-2.5 mt-3">
-                          {day.activities.map((activity, i) => (
-                            <li key={i} className="flex items-start gap-3 text-slate-600 text-sm">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 flex-shrink-0" />
-                              {activity}
-                            </li>
-                          ))}
-                        </ul>
+                      <div className="flex flex-wrap gap-1.5">
+                        {tierDetails[i].feats.map(f => (
+                          <span key={f} className="text-[10px] bg-slate-50 text-slate-600 px-2 py-1 rounded-full border border-slate-100">{f}</span>
+                        ))}
                       </div>
-                    )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Itinerary */}
+              <div className="bg-slate-50 rounded-2xl p-4 mb-6">
+                <h3 className="text-sm font-medium text-slate-900 mb-3">{durLabels[dur]} · Day by day</h3>
+                {itineraries[dur].map((d, i) => (
+                  <div key={i} className={`flex gap-3 py-2.5 ${i < itineraries[dur].length - 1 ? 'border-b border-slate-200' : ''}`}>
+                    <span className="text-[10px] text-slate-400 uppercase tracking-wide min-w-[36px] pt-0.5">{d.day}</span>
+                    <div>
+                      <p className="text-sm font-medium text-slate-800">{d.title}</p>
+                      <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">{d.desc}</p>
+                    </div>
                   </div>
                 ))}
               </div>
-            </section>
 
-            {/* Includes / Excludes */}
-            <section>
-              <h2 className="text-2xl font-serif text-slate-900 mb-5">What&apos;s Included</h2>
-              <div className="grid md:grid-cols-2 gap-5">
-                <div className="bg-green-50 border border-green-100 rounded-2xl p-6">
-                  <h3 className="font-semibold text-green-800 mb-4 flex items-center gap-2 text-sm uppercase tracking-wide">
-                    <Check className="w-4 h-4" /> Included
-                  </h3>
-                  <ul className="space-y-3">
-                    {trip.includes.map((item, i) => (
-                      <li key={i} className="flex items-start gap-3 text-slate-700 text-sm">
-                        <Check className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
+              {/* Summary */}
+              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 mb-4">
+                <p className="text-xs font-medium text-emerald-800 mb-2">Your trip summary</p>
+                <div className="flex justify-between text-sm text-emerald-700 mb-1">
+                  <span>{durLabels[dur]}</span>
+                  <span>{tierNames[tierIdx]}</span>
                 </div>
-                <div className="bg-red-50 border border-red-100 rounded-2xl p-6">
-                  <h3 className="font-semibold text-red-800 mb-4 flex items-center gap-2 text-sm uppercase tracking-wide">
-                    <X className="w-4 h-4" /> Not Included
-                  </h3>
-                  <ul className="space-y-3">
-                    {trip.excludes.map((item, i) => (
-                      <li key={i} className="flex items-start gap-3 text-slate-700 text-sm">
-                        <X className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
+                <div className="flex justify-between text-sm text-emerald-700 mb-2">
+                  <span>{pax} {pax === 1 ? 'person' : 'people'}</span>
+                  <span className="font-medium">{pax >= 3 ? `${Math.round(getDiscount(pax)*100)}% off` : pax === 1 ? '+30% solo' : 'Standard rate'}</span>
+                </div>
+                <div className="flex justify-between text-base font-semibold text-emerald-900 pt-2 border-t border-emerald-200">
+                  <span>Total estimate</span>
+                  <span>{fmt(currentTotal)}</span>
                 </div>
               </div>
-            </section>
+
+              <p className="text-xs text-slate-400 text-center mb-4">
+                {trip.slug === 'darjeeling'
+                  ? 'NJP pickup & drop included · Train/flight to NJP not included · ₹3,000 advance secures spot'
+                  : 'Transport (Delhi ↔ Aut) not included · ₹3,000 advance secures your spot'}
+              </p>
+
+            </div>
+            {/* End Package Calculator */}
 
             {/* Gallery */}
             <section>

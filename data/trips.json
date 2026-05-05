@@ -4,9 +4,9 @@
     "title": "Jibhi Valley Escape",
     "tagline": "Pine forests, mountain silence, and a rhythm you forgot exists.",
     "location": "Himachal Pradesh",
-    "route": "Delhi → Jibhi → Rishikesh",
-    "duration": "9 Days / 8 Nights",
-    "shortDuration": "9D · 8N",
+    "route": "Aut → Jibhi → aAut",
+    "duration": "5 Days / 4 Nights",
+    "shortDuration": "5D · 4N",
     "price": 15000,
     "originalPrice": 19000,
     "groupSize": "Max 8",
@@ -278,6 +278,111 @@
     "nextDeparture": "April 10, 2026",
     "spotsLeft": 5,
     "totalSpots": 8
+  },
+  {
+    "slug": "darjeeling",
+    "title": "Darjeeling Escape",
+    "subtitle": "Sunrise over Kanchenjunga, toy trains, tea gardens — the Queen of Hills at slow pace.",
+    "tagline": "Sunrise over Kanchenjunga, toy trains, tea gardens — the Queen of Hills at slow pace.",
+    "location": "West Bengal",
+    "route": "NJP → Darjeeling → NJP",
+    "duration": "3D · 2N",
+    "shortDuration": "3D · 2N",
+    "price": 4999,
+    "originalPrice": 7500,
+    "groupSize": "Max 8",
+    "difficulty": "Easy",
+    "category": "Mountains",
+    "image": "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800&q=80",
+    "heroImage": "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=1920&q=80",
+    "gallery": [
+      "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800&q=80",
+      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80",
+      "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80"
+    ],
+    "highlights": [
+      "Tiger Hill sunrise at 4am",
+      "Kanchenjunga panoramic views",
+      "Toy train ride (UNESCO heritage)",
+      "Tea garden walk & tasting"
+    ],
+    "itinerary": [
+      {
+        "day": 1,
+        "title": "NJP → Darjeeling · Arrive & explore",
+        "location": "NJP → Darjeeling",
+        "activities": [
+          "Pickup from NJP station",
+          "Scenic 3hr drive up the hills",
+          "Check in, Mall Road evening walk",
+          "Local food and rest"
+        ]
+      },
+      {
+        "day": 2,
+        "title": "Tiger Hill 4am · Sightseeing · Tea garden",
+        "location": "Darjeeling",
+        "activities": [
+          "4am Tiger Hill sunrise over Kanchenjunga",
+          "Ghoom Monastery and Batasia Loop",
+          "Zoo and tea garden walk",
+          "Relaxed evening on Mall Road"
+        ]
+      },
+      {
+        "day": 3,
+        "title": "Mirik Lake · NJP drop",
+        "location": "Mirik → NJP",
+        "activities": [
+          "Morning Mirik lake and Simana viewpoint",
+          "Gopaldhara tea estate visit",
+          "Drop to NJP by afternoon"
+        ]
+      }
+    ],
+    "includes": [
+      "NJP pickup and drop",
+      "All local transfers and cab",
+      "2 nights hotel/homestay",
+      "Breakfast daily",
+      "Tiger Hill sunrise trip",
+      "Local sightseeing guide"
+    ],
+    "excludes": [
+      "Train/flight to NJP",
+      "Toy train ticket (₹1,000 optional)",
+      "Entry fees (₹50-100 per site)",
+      "Personal expenses"
+    ],
+    "faqs": [
+      {
+        "q": "What fitness level is required?",
+        "a": "Easy — suitable for all ages. Tiger Hill requires an early 4am start but no trekking."
+      },
+      {
+        "q": "Best time to visit?",
+        "a": "March to June and September to November for clear Kanchenjunga views."
+      },
+      {
+        "q": "Is toy train included?",
+        "a": "Toy train ride is optional at ₹1,000 extra — we help you book it on ground."
+      },
+      {
+        "q": "What is the cancellation policy?",
+        "a": "Advance is non-refundable. Balance refunded if cancelled 7+ days before departure."
+      }
+    ],
+    "durations": [
+      { "label": "3D / 2N", "popular": false, "price": { "standard": 4999, "deluxe": 7999 } },
+      { "label": "4D / 3N", "popular": true,  "price": { "standard": 6999, "deluxe": 10999 } },
+      { "label": "5D / 4N", "popular": false, "price": { "standard": 8999, "deluxe": 13999 } }
+    ],
+    "bookingLink": "https://forms.gle/GJuAs71C2dujDDs3A",
+    "whatsapp": "919178628894",
+    "advance": 3000,
+    "nextDeparture": "Available year-round",
+    "spotsLeft": 8,
+    "totalSpots": 8
   }
-  
 ]
