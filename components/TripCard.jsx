@@ -1,93 +1,132 @@
 'use client';
 import Link from 'next/link';
-import { Clock, MapPin, Users } from 'lucide-react';
-
-const CATEGORY_COLORS = {
-  Mountains: 'bg-blue-100 text-blue-700',
-  Wildlife:  'bg-amber-100 text-amber-700',
-  Hills:     'bg-emerald-100 text-emerald-700',
-};
+import { useState } from 'react';
 
 const TripCard = ({ trip }) => {
-  const categoryStyle = CATEGORY_COLORS[trip.category] ?? 'bg-slate-100 text-slate-600';
   const savingsPct = Math.round(((trip.originalPrice - trip.price) / trip.originalPrice) * 100);
+  const photos = trip.gallery?.length ? trip.gallery : [trip.image];
+  const [photoIdx, setPhotoIdx] = useState(0);
+
+  const prevPhoto = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setPhotoIdx((i) => (i - 1 + photos.length) % photos.length);
+  };
+  const nextPhoto = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setPhotoIdx((i) => (i + 1) % photos.length);
+  };
 
   return (
     <Link
       href={`/trip/${trip.slug}`}
-      className="group flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+      className="flex flex-col bg-white rounded-2xl overflow-hidden border border-slate-100 transition-all duration-200 hover:shadow-md"
+      style={{ width: '240px', flexShrink: 0 }}
     >
-      {/* Image */}
-      <div className="relative overflow-hidden h-52 flex-shrink-0">
+      {/* Image carousel */}
+      <div className="relative overflow-hidden flex-shrink-0" style={{ height: '150px' }}>
         <img
-          src={trip.image}
+          src={photos[photoIdx]}
           alt={trip.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-cover"
           loading="lazy"
         />
+
         {/* Category badge */}
-        <span className={`absolute top-3 left-3 text-xs font-semibold px-3 py-1 rounded-full backdrop-blur-sm ${categoryStyle}`}>
+        <span className="absolute top-2.5 left-2.5 bg-black/50 text-white text-[10px] px-2.5 py-1 rounded-full backdrop-blur">
           {trip.category}
         </span>
-        {/* Urgency badge */}
+
+        {/* Spots remaining badge */}
         {trip.spotsLeft <= 3 && (
-          <span className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+          <span className="absolute top-2.5 right-2.5 bg-red-500 text-white text-[10px] px-2 py-1 rounded-full">
             {trip.spotsLeft} left
           </span>
         )}
-        {/* Discount badge */}
-        {savingsPct > 0 && trip.spotsLeft > 3 && (
-          <span className="absolute top-3 right-3 bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow">
-            {savingsPct}% off
-          </span>
+
+        {/* Prev arrow */}
+        {photos.length > 1 && (
+          <button
+            onClick={prevPhoto}
+            className="absolute left-2 top-1/2 -translate-y-1/2 w-[26px] h-[26px] rounded-full bg-black/40 flex items-center justify-center"
+            aria-label="Previous photo"
+          >
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <path d="M6 2L4 5l2 3" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+          </button>
+        )}
+
+        {/* Next arrow */}
+        {photos.length > 1 && (
+          <button
+            onClick={nextPhoto}
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-[26px] h-[26px] rounded-full bg-black/40 flex items-center justify-center"
+            aria-label="Next photo"
+          >
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <path d="M4 2l2 3-2 3" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+          </button>
+        )}
+
+        {/* Dot indicators */}
+        {photos.length > 1 && (
+          <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1 pointer-events-none">
+            {photos.map((_, i) => (
+              <span
+                key={i}
+                className={`rounded-full transition-all ${
+                  i === photoIdx ? 'w-[14px] h-[5px] bg-white' : 'w-[5px] h-[5px] bg-white/50'
+                }`}
+              />
+            ))}
+          </div>
         )}
       </div>
 
-      {/* Body */}
-      <div className="flex flex-col flex-1 p-5">
+      {/* Card body */}
+      <div className="flex flex-col flex-1 p-3">
         {/* Route */}
-        <div className="flex items-center gap-1.5 text-slate-400 text-xs mb-2">
-          <MapPin className="w-3 h-3 flex-shrink-0" />
+        <div className="flex items-center gap-1 text-[10px] text-slate-400 mb-1">
+          <span className="w-2 h-2 rounded-full border border-slate-300 inline-block flex-shrink-0" />
           <span className="truncate">{trip.route}</span>
         </div>
 
         {/* Title */}
-        <h3 className="text-base font-semibold text-slate-900 mb-1 group-hover:text-emerald-700 transition-colors leading-snug">
+        <h3 className="text-sm font-medium text-slate-900 mb-1.5 leading-snug">
           {trip.title}
         </h3>
 
-        {/* Tagline */}
-        <p className="text-slate-400 text-sm mb-4 line-clamp-2 leading-relaxed flex-1">
-          {trip.tagline}
-        </p>
-
-        {/* Meta */}
-        <div className="flex items-center gap-3 text-xs text-slate-500 mb-4">
-          <span className="flex items-center gap-1">
-            <Clock className="w-3.5 h-3.5" />
+        {/* Tags */}
+        <div className="flex gap-1.5 flex-wrap mb-2.5">
+          <span className="text-[10px] bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded-full border border-emerald-100">
             {trip.shortDuration}
           </span>
-          <span className="w-px h-3 bg-slate-200" />
-          <span className="flex items-center gap-1">
-            <Users className="w-3.5 h-3.5" />
-            {trip.groupSize}
+          <span className="text-[10px] bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded-full border border-emerald-100">
+            {trip.difficulty}
           </span>
         </div>
 
-        {/* Price + CTA */}
-        <div className="flex items-end justify-between pt-4 border-t border-slate-100">
-          <div className="leading-tight">
-            <p className="text-xs text-slate-400 line-through">
-              ₹{trip.originalPrice.toLocaleString('en-IN')}
+        {/* Footer */}
+        <div className="flex justify-between items-end mt-auto">
+          <div>
+            <p className="text-[9px] text-slate-400 uppercase tracking-wide">from</p>
+            <p className="text-[11px] text-slate-400 line-through leading-none">
+              ₹{(Math.round(trip.price * 1.4 / 500) * 500).toLocaleString('en-IN')}
             </p>
-            <p className="text-xl font-bold text-emerald-700">
-              ₹{trip.price.toLocaleString('en-IN')}
-            </p>
-            <p className="text-xs text-slate-400">per person</p>
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <p className="text-lg font-medium text-slate-900 leading-none">
+                ₹{trip.price.toLocaleString('en-IN')}
+              </p>
+              <span className="text-[9px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full font-medium">40% off</span>
+            </div>
+            <p className="text-[10px] text-slate-400">per person</p>
           </div>
-          <span className="text-sm font-semibold px-4 py-2 rounded-xl border border-emerald-200 text-emerald-700 bg-emerald-50 group-hover:bg-emerald-700 group-hover:text-white group-hover:border-emerald-700 transition-colors duration-300">
-            View Details
-          </span>
+          <button className="bg-emerald-600 text-white text-[11px] font-medium px-3.5 py-1.5 rounded-full">
+            Book →
+          </button>
         </div>
       </div>
     </Link>

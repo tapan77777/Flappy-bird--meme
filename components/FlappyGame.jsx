@@ -1,7 +1,6 @@
 'use client';
 import experiences from '@/data/experiences.json';
 import trips from '@/data/trips.json';
-import { ArrowRight, ChevronDown, Menu, XIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import ExperienceCard from './ExperienceCard';
@@ -72,6 +71,9 @@ const TestimonialCard = ({ name, from, trip, rating, quote, avatar }) => (
   </div>
 );
 
+/* ─── Trip categories for filter bar ────────────────────────────────────── */
+const TRIP_CATEGORIES = ['All', 'Mountains', 'Beach', 'Trek', 'Wildlife', 'Islands'];
+
 /* ═══════════════════════════════════════════════════════════════════════════
    Main component
 ═══════════════════════════════════════════════════════════════════════════ */
@@ -80,6 +82,7 @@ const StayLocal = () => {
   const [activeSection,    setActiveSection]    = useState('home');
   const [scrolled,         setScrolled]         = useState(false);
   const [pastHero,         setPastHero]         = useState(false);
+  const [activeCategory,   setActiveCategory]   = useState('All');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -110,16 +113,14 @@ const StayLocal = () => {
     <div className="bg-gradient-to-br from-slate-50 via-blue-50 to-emerald-50 text-slate-900 pb-20 lg:pb-0">
 
       {/* ── Navigation ──────────────────────────────────────────────────── */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled ? 'bg-white/90 backdrop-blur-lg shadow-lg' : 'bg-transparent'
-      }`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-5 py-4">
           <div className="flex items-center justify-between">
             <button
               onClick={() => scrollToSection('home')}
-              className="text-xl sm:text-2xl font-serif font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent"
+              className="font-serif text-xl"
             >
-              StayLocal
+              <span className="text-slate-900">Stay</span><span className="text-emerald-600">Local</span>
             </button>
 
             {/* Desktop nav */}
@@ -149,82 +150,126 @@ const StayLocal = () => {
               )}
             </div>
 
-            {/* Mobile hamburger — 44×44px touch target */}
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden w-11 h-11 flex items-center justify-center rounded-xl hover:bg-slate-100 transition-colors"
-              aria-label="Toggle menu"
+            {/* WhatsApp pill — mobile */}
+            <a
+              href="https://wa.me/919178628894"
+              className="md:hidden bg-emerald-600 text-white text-xs font-medium px-4 py-2 rounded-full"
             >
-              {mobileMenuOpen ? <XIcon className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+              WhatsApp
+            </a>
           </div>
-
-          {/* Mobile dropdown */}
-          {mobileMenuOpen && (
-            <div className="md:hidden mt-3 pb-3 space-y-1 animate-fadeIn">
-              {navItems.map((item) =>
-                item.type === 'link' ? (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block w-full text-left px-4 py-3.5 rounded-xl transition-all text-sm font-medium text-slate-600 hover:bg-slate-100"
-                  >
-                    {item.label}
-                  </Link>
-                ) : (
-                  <button
-                    key={item.id}
-                    onClick={() => scrollToSection(item.id)}
-                    className={`block w-full text-left px-4 py-3.5 rounded-xl transition-all text-sm font-medium ${
-                      activeSection === item.id
-                        ? 'bg-emerald-100 text-emerald-700'
-                        : 'text-slate-600 hover:bg-slate-100'
-                    }`}
-                  >
-                    {item.label}
-                  </button>
-                )
-              )}
-            </div>
-          )}
         </div>
       </nav>
 
       {/* ── Hero ────────────────────────────────────────────────────────── */}
-      <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/60 via-emerald-900/40 to-teal-900/60 z-10" />
-        <img
-          src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80"
-          alt="Mountain landscape"
-          className="absolute inset-0 w-full h-full object-cover animate-zoomSlow"
+      <section id="home" className="relative h-[42vh] min-h-[300px] max-h-[380px] flex flex-col items-center justify-center overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80')",
+            opacity: 0.15,
+            filter: 'blur(2px)',
+            transform: 'scale(1.05)'
+          }}
         />
-        <div className="relative z-20 text-center text-white px-5 max-w-4xl animate-fadeInUp">
-          <button onClick={() => scrollToSection('trips')}>
-            <div className="mb-5 sm:mb-8 inline-block">
-              {/* Responsive logo: smaller on phones */}
-              <img
-                src="favicon.ico"
-                alt="Logo"
-                className="w-24 h-24 sm:w-40 sm:h-40 md:w-60 md:h-60 mx-auto animate-float"
-              />
-            </div>
-          </button>
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-serif mb-4 sm:mb-6 leading-tight animate-slideDown">
-            Stay local. Move slow.
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0d3d2e]/95 via-[#1a5c40]/90 to-[#0f4d35]/95" />
+        <div className="relative z-10 w-full text-center text-white px-5 max-w-sm mx-auto">
+          <p className="text-[10px] tracking-[0.18em] uppercase text-emerald-300 mb-2">Slow travel · Real places</p>
+          <h1 className="font-serif text-4xl font-semibold leading-tight mb-3">
+            Stay local.<br />
+            <span className="text-emerald-400">Move slow.</span>
           </h1>
-          <p className="text-base sm:text-xl md:text-2xl mb-8 sm:mb-12 text-slate-200 font-light leading-relaxed animate-slideUp">
-            Travel that follows the rhythm of the place — not a checklist.
+          <p className="text-sm text-white/70 leading-relaxed mb-5 max-w-[280px] mx-auto">
+            Small groups. Homestays. Places most tourists never find.
           </p>
-          <button
-            onClick={() => scrollToSection('trips')}
-            className="group bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-8 sm:px-10 py-4 sm:py-5 rounded-full text-base sm:text-lg font-medium hover:shadow-2xl hover:scale-105 transition-all duration-300 animate-pulse-slow"
-          >
-            <span className="flex items-center gap-2">
-              Begin the Journey
-              <ChevronDown className="w-5 h-5 group-hover:translate-y-1 transition-transform" />
-            </span>
-          </button>
+          <div className="flex bg-white/10 rounded-xl overflow-hidden border border-white/10 mt-5">
+            <div className="flex-1 py-2.5 text-center border-r border-white/10">
+              <p className="text-base font-medium text-white">Max 8</p>
+              <p className="text-[9px] uppercase tracking-wider text-white/50 mt-0.5">Per group</p>
+            </div>
+            <div className="flex-1 py-2.5 text-center border-r border-white/10">
+              <p className="text-base font-medium text-white">25+</p>
+              <p className="text-[9px] uppercase tracking-wider text-white/50 mt-0.5">Destinations</p>
+            </div>
+            <div className="flex-1 py-2.5 text-center">
+              <p className="text-base font-medium text-white">100%</p>
+              <p className="text-[9px] uppercase tracking-wider text-white/50 mt-0.5">Real reviews</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      {/* ── Explore Trips ───────────────────────────────────────────────── */}
+      <section id="trips" className="bg-[#f8f7f4] pb-6 overflow-hidden">
+        <div className="max-w-6xl mx-auto">
+
+          {/* Section header */}
+          <div className="flex justify-between items-center px-5 py-4">
+            <h2 className="text-[15px] font-medium text-slate-900">Explore Trips</h2>
+            <a href="#" className="text-xs text-emerald-600 font-medium">See all</a>
+          </div>
+
+          {/* ── Category filter bar ── */}
+          <div className="flex overflow-x-auto hide-scrollbar bg-white border-b border-slate-100 py-3">
+            {[
+              { cat: 'All',       emoji: '🗺️' },
+              { cat: 'Mountains', emoji: '⛰️' },
+              { cat: 'Beach',     emoji: '🏖️' },
+              { cat: 'Trek',      emoji: '🥾' },
+              { cat: 'Wildlife',  emoji: '🐘' },
+              { cat: 'Islands',   emoji: '🏝️' },
+            ].map(({ cat, emoji }) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-3 pb-2 flex flex-col items-center gap-1.5 flex-shrink-0 transition-all duration-200 ${
+                  activeCategory === cat ? 'border-b-2 border-emerald-500' : ''
+                }`}
+              >
+                <span className={`w-11 h-11 rounded-full flex items-center justify-center text-[20px] ${
+                  activeCategory === cat ? 'bg-emerald-50' : 'bg-slate-50'
+                }`}>
+                  {emoji}
+                </span>
+                <span className={`text-[10px] whitespace-nowrap ${
+                  activeCategory === cat ? 'text-emerald-600 font-medium' : 'text-slate-400'
+                }`}>
+                  {cat}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          {/* ── Horizontal scroll row (all screen sizes) ── */}
+          <div className="flex gap-2.5 overflow-x-auto pt-3 pb-5 px-4 sm:px-6 snap-x snap-mandatory scroll-smooth hide-scrollbar">
+            {(activeCategory === 'All' ? trips : trips.filter((t) => t.category === activeCategory)).map((trip) => (
+              <div key={trip.slug} className="w-[270px] min-w-[270px] snap-start flex-shrink-0">
+                <TripCard trip={trip} />
+              </div>
+            ))}
+            <div className="min-w-[1rem] flex-shrink-0" aria-hidden="true" />
+          </div>
+
+          {/* Scroll hint dots */}
+          <div className="flex justify-center gap-1.5 mt-4">
+            {(activeCategory === 'All' ? trips : trips.filter((t) => t.category === activeCategory)).map((_, i) => (
+              <span key={i} className="w-1.5 h-1.5 rounded-full bg-slate-300" />
+            ))}
+          </div>
+
+          {/* Footer note */}
+          <p className="text-center text-slate-400 text-sm mt-8 md:mt-12 px-4 sm:px-6">
+            More destinations coming soon —{' '}
+            <a
+              href="https://wa.me/919178628894"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-emerald-600 hover:underline font-medium"
+            >
+              WhatsApp us for custom journeys
+            </a>
+          </p>
         </div>
       </section>
 
@@ -256,62 +301,6 @@ const StayLocal = () => {
         </div>
       </section>
 
-      {/* ── Explore Trips ───────────────────────────────────────────────── */}
-      <section id="trips" className="py-16 md:py-24 bg-white overflow-hidden">
-        <div className="max-w-6xl mx-auto">
-
-          {/* Heading — with horizontal padding */}
-          <div className="text-center mb-8 md:mb-14 px-4 sm:px-6">
-            <span className="inline-block text-emerald-600 font-semibold text-xs tracking-widest uppercase mb-3">
-              Handpicked Journeys
-            </span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-slate-900 mb-3 sm:mb-4">
-              Explore Trips
-            </h2>
-            <p className="text-slate-500 max-w-lg mx-auto text-base sm:text-lg leading-relaxed">
-              Small groups. Slow pace. Real places. Pick a journey that speaks to you.
-            </p>
-          </div>
-
-          {/* ── Mobile: horizontal snap scroll ── */}
-          <div className="sm:hidden flex gap-4 overflow-x-auto pb-5 px-4 snap-x snap-mandatory scroll-smooth hide-scrollbar">
-            {trips.map((trip) => (
-              <div key={trip.slug} className="min-w-[80vw] w-[80vw] snap-start flex-shrink-0">
-                <TripCard trip={trip} />
-              </div>
-            ))}
-            {/* Trailing spacer so last card isn't flush against edge */}
-            <div className="min-w-[1rem] flex-shrink-0" aria-hidden="true" />
-          </div>
-
-          {/* ── Desktop: grid ── */}
-          <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-7 px-4 sm:px-6">
-            {trips.map((trip) => (
-              <TripCard key={trip.slug} trip={trip} />
-            ))}
-          </div>
-
-          {/* Scroll hint dots — mobile only */}
-          <div className="flex sm:hidden justify-center gap-1.5 mt-4">
-            {trips.map((_, i) => (
-              <span key={i} className="w-1.5 h-1.5 rounded-full bg-slate-300" />
-            ))}
-          </div>
-
-          {/* Footer note */}
-          <p className="text-center text-slate-400 text-sm mt-8 md:mt-12 px-4 sm:px-6">
-            More destinations coming soon —{' '}
-            <a
-              href="https://wa.me/919999999999"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-emerald-600 hover:underline font-medium"
-            >
-              WhatsApp us for custom journeys
-            </a>
-          </p>
-        </div>
-      </section>
 
       {/* ── Trust & Testimonials ────────────────────────────────────────── */}
       <section className="py-16 md:py-24 bg-stone-50 overflow-hidden">
@@ -402,7 +391,7 @@ const StayLocal = () => {
                   {/* Tap-to-explore badge — fades in on hover */}
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <span className="flex items-center gap-2 bg-white/90 backdrop-blur-sm text-slate-900 text-sm font-semibold px-5 py-2.5 rounded-full shadow-lg">
-                      <ArrowRight className="w-4 h-4 text-emerald-600" />
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-emerald-600"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                       Explore real experiences
                     </span>
                   </div>
@@ -437,8 +426,8 @@ const StayLocal = () => {
               <div className="flex gap-8 mb-8">
                 {[
                   { value: '2+', label: 'Years of Experience' },
-                  { value: '25+',  label: 'Destinations' },
-                  { value: '50+', label: 'Travel' },
+                  { value: '25+',  label: 'Places Visited' },
+                  { value: '50+', label: 'Destinations' },
                 ].map(({ value, label }) => (
                   <div key={label}>
                     <p className="text-2xl font-bold text-slate-900 leading-none">{value}</p>
@@ -472,7 +461,7 @@ const StayLocal = () => {
                            min-h-[52px]"
               >
                 See Real Experiences
-                <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="transition-transform duration-200 group-hover:translate-x-0.5"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </Link>
             </div>
           </div>
@@ -524,7 +513,7 @@ const StayLocal = () => {
                          hover:text-emerald-700 transition-colors"
             >
               Read all experiences
-              <ArrowRight className="w-4 h-4" />
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </Link>
           </div>
         </div>
@@ -539,7 +528,7 @@ const StayLocal = () => {
           </p>
           {/* Thumb-friendly CTA: min-height 56px */}
           <a
-            href="https://wa.me/919999999999"
+            href="https://wa.me/919178628894"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-3 bg-[#25D366] text-white px-7 sm:px-8 py-4 rounded-full text-base sm:text-lg font-semibold shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300 min-h-[56px]"
@@ -601,7 +590,7 @@ const StayLocal = () => {
           <div className="flex gap-3">
             {/* WhatsApp */}
             <a
-              href="https://wa.me/919999999999"
+              href="https://wa.me/919178628894"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 flex-1 bg-[#25D366] text-white py-3.5 rounded-2xl font-semibold text-sm min-h-[52px] active:scale-95 transition-transform"

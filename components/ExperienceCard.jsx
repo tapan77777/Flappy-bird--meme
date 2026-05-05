@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { ArrowRight, MapPin } from 'lucide-react';
 
 const ExperienceCard = ({ experience }) => (
   <Link
@@ -32,7 +31,7 @@ const ExperienceCard = ({ experience }) => (
     {/* Body */}
     <div className="flex flex-col flex-1 p-5">
       <div className="flex items-center gap-1.5 text-emerald-600 text-xs font-semibold mb-2">
-        <MapPin className="w-3 h-3 flex-shrink-0" />
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="5.5" r="2" stroke="currentColor" strokeWidth="1.2"/><path d="M7 14S2.5 9 2.5 5.5a4.5 4.5 0 019 0C11.5 9 7 14 7 14z" stroke="currentColor" strokeWidth="1.2" fill="none"/></svg>
         <span>{experience.place}</span>
       </div>
 
@@ -48,7 +47,7 @@ const ExperienceCard = ({ experience }) => (
       <span className="inline-flex items-center gap-1.5 text-emerald-600 text-sm font-semibold
                        group-hover:gap-2.5 transition-all duration-200">
         Read Experience
-        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="group-hover:translate-x-0.5 transition-transform"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
       </span>
     </div>
   </Link>

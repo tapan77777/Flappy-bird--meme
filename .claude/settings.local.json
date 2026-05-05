@@ -5,7 +5,12 @@
       "Bash(Remove-Item -Force .next/lock -ErrorAction SilentlyContinue)",
       "Bash(Select-String -Pattern \"error|Error|Compiled|Generating|FATAL|Failed\")",
       "Bash(npm run:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(npx tsc *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3001)",
+      "Bash(pkill -f node)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://localhost:3000)",
+      "Bash(npm install *)"
     ]
   }
 }

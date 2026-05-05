@@ -6,7 +6,6 @@ import {
   ArrowRight,
   Calendar,
   Check,
-  ChevronDown,
   Clock,
   MapPin,
   Shield,
@@ -342,11 +341,14 @@ const TripDetail = ({ trip }) => {
                           <p className="text-xs text-emerald-600 mt-0.5">{day.location}</p>
                         </div>
                       </div>
-                      <ChevronDown
-                        className={`w-5 h-5 text-slate-400 flex-shrink-0 transition-transform duration-300 ${
+                      <svg
+                        width="16" height="16" viewBox="0 0 16 16" fill="none"
+                        className={`flex-shrink-0 text-slate-400 transition-transform duration-300 ${
                           expandedDay === idx ? 'rotate-180' : ''
                         }`}
-                      />
+                      >
+                        <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
                     </button>
                     {expandedDay === idx && (
                       <div className="px-5 pb-5 pt-1 border-t border-slate-100 bg-slate-50/50">
@@ -438,11 +440,14 @@ const TripDetail = ({ trip }) => {
                       className="w-full flex items-center justify-between px-4 sm:px-5 py-4 min-h-[60px] text-left hover:bg-slate-50 transition-colors"
                     >
                       <span className="font-medium text-slate-800 text-sm pr-4">{faq.q}</span>
-                      <ChevronDown
-                        className={`w-5 h-5 text-slate-400 flex-shrink-0 transition-transform duration-300 ${
+                      <svg
+                        width="16" height="16" viewBox="0 0 16 16" fill="none"
+                        className={`flex-shrink-0 text-slate-400 transition-transform duration-300 ${
                           openFaq === i ? 'rotate-180' : ''
                         }`}
-                      />
+                      >
+                        <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
                     </button>
                     {openFaq === i && (
                       <div className="px-5 pb-5 pt-1 border-t border-slate-100 bg-slate-50/50">
